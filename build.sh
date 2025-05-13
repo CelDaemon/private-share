@@ -1,2 +1,6 @@
-pushd src && zip -r -Z deflate -FS ../out/private-share.xpi * && popd
-cp out/private-share.xpi out/private-share.crx
+read -sp "Enter key:" key
+echo
+read -sp "Enter secret:" secret
+echo
+
+WEB_EXT_API_KEY="$key" WEB_EXT_API_SECRET="$secret" npx web-ext sign -s src/ -a out --channel unlisted
