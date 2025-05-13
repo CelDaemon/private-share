@@ -1,0 +1,19 @@
+{
+    "manifest_version": 3,
+    "name": "Private Share",
+    "version": "0.1",
+    "description": "Remove tracking from share functions",
+    "content_scripts": [
+        {
+            "matches": ["https://www.reddit.com/*", "https://www.youtube.com/*"],
+            "js": ["content.js"],
+            "run_at": "document_start",
+            "world": "MAIN"
+        }
+    ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "private-share@voidgroup.net"
+        }
+    }
+}
