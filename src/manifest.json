@@ -3,6 +3,10 @@
     "name": "Private Share",
     "version": "0.2",
     "description": "Remove tracking from share functions",
+    "icons": {
+        "32": "icon.svg",
+        "64": "icon.svg"
+    },
     "content_scripts": [
         {
             "matches": ["https://www.reddit.com/*", "https://www.youtube.com/*", "https://x.com/*"],
