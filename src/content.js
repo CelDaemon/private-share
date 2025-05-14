@@ -21,6 +21,7 @@
                 handleReddit(url);
                 break;
             case "youtu.be":
+            case "music.youtube.com":
                 handleYoutube(url);
                 break;
             case "x.com":

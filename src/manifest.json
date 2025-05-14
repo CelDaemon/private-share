@@ -9,7 +9,12 @@
     },
     "content_scripts": [
         {
-            "matches": ["https://www.reddit.com/*", "https://www.youtube.com/*", "https://x.com/*"],
+            "matches": [
+                "https://www.reddit.com/*",
+                "https://www.youtube.com/*",
+                "https://music.youtube.com/*",
+                "https://x.com/*"
+            ],
             "js": ["content.js"],
             "run_at": "document_start",
             "world": "MAIN"
