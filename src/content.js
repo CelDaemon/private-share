@@ -15,7 +15,7 @@
     function handleCopy(text) {
         const url = URL.parse(text);
         if(!url)
-            return navigator.clipboard._writeText(arguments);
+            return false;
         switch(url.host) {
             case "www.reddit.com":
                 handleReddit(url);
@@ -26,16 +26,15 @@
             case "x.com":
                 handleTwitter(url);
                 break;
+            default:
+                return false;
         }
         return navigator.clipboard._writeText(url.href);
     }
     navigator.clipboard._writeText ??= navigator.clipboard.writeText;
     navigator.clipboard.writeText = async function(text) {
-        handleCopy(text);
-    }
-    navigator.clipboard._write ??= navigator.clipboard.write;
-    navigator.clipboard.write = async function(data) {
-        console.log(data);
+        if(!handleCopy(text))
+            return navigator.clipboard._writeText(arguments);
     }
     document._execCommand ??= document.execCommand;
     document.execCommand = function(cmd) {
@@ -50,7 +49,8 @@
             return;
         }
         const selection = focus.value.substring(focus.selectionStart, focus.selectionEnd);
-        handleCopy(selection);
+        if(!handleCopy(selection))
+            return document._execCommand(arguments);
     }
     console.log("Privately Sharing!");
 })();
