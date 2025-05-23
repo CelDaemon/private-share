@@ -20,6 +20,7 @@
             case "www.reddit.com":
                 handleReddit(url);
                 break;
+            case "www.youtube.com":
             case "youtube.com":
             case "youtu.be":
             case "music.youtube.com":
