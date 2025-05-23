@@ -36,23 +36,23 @@
     navigator.clipboard._writeText ??= navigator.clipboard.writeText;
     navigator.clipboard.writeText = async function(text) {
         if(!handleCopy(text))
-            return navigator.clipboard._writeText(arguments);
+            return navigator.clipboard._writeText(...arguments);
     }
     document._execCommand ??= document.execCommand;
     document.execCommand = function(cmd) {
         if(cmd !== "copy")
-            return document._execCommand(arguments);
+            return document._execCommand(...arguments);
         const focus = document.activeElement;
         if(!focus || !(focus instanceof HTMLInputElement)) {
             const selection = document.getSelection()?.toString();
             if(!selection)
-                return document._execCommand(arguments);
+                return document._execCommand(...arguments);
             handleCopy(selection);
             return;
         }
         const selection = focus.value.substring(focus.selectionStart, focus.selectionEnd);
         if(!handleCopy(selection))
-            return document._execCommand(arguments);
+            return document._execCommand(...arguments);
     }
     console.log("Privately Sharing!");
 })();
