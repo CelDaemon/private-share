@@ -1,0 +1,24 @@
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Resolve metadata
+        run: |
+          echo "VERSION=$(jq -r '.version' package.json)" >> "$GITHUB_ENV"
+          echo "EXTENSION_NAME=$(jq -r '.name' package.json)" >> "$GITHUB_ENV"
+      - name: Populate manifest
+        run: jq ".version = \"$VERSION\"" src/manifest.json > src/manifest.json.tmp && mv src/manifest.json.tmp src/manifest.json
+      - name: Install dependencies
+        run: npm install -D
+      - name: Build extension
+        run: npx web-ext build -s 'src' -a 'out' -n ${{env.EXTENSION_NAME}}-${{env.VERSION}}.zip
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: private_share-${{env.VERSION}}
+          path: out/private_share-${{env.VERSION}}.zip
