@@ -16,9 +16,9 @@ jobs:
       - name: Install dependencies
         run: npm install -D
       - name: Build extension
-        run: npx web-ext build -s 'src' -a 'out' -n ${{env.EXTENSION_NAME}}-${{env.VERSION}}.zip
+        run: npx web-ext build -s src -a out
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: private_share-${{env.VERSION}}
-          path: out/private_share-${{env.VERSION}}.zip
+          name: private_share-${{env.VERSION}}-unsigned
+          path: out/*

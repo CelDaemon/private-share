@@ -1,0 +1,36 @@
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Resolve metadata
+        run: |
+          cat << EOF >> "$GITHUB_ENV"
+          VERSION=$(jq -r '.version' package.json)
+          EXTENSION_NAME=$(jq -r '.name' package.json)
+          EOF
+      - name: Populate manifest
+        run: jq ".version = \"$VERSION\"" src/manifest.json > src/manifest.json.tmp && mv src/manifest.json.tmp src/manifest.json
+      - name: Install dependencies
+        run: npm install -D
+      - name: Sign extension
+        run: npx web-ext sign -s src -a out --channel unlisted --approval-timeout 0
+        env:
+          WEB_EXT_API_KEY: ${{ secrets.API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.API_SECRET }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: private_share-${{ env.VERSION }}-signed
+          path: out/*
+
+        
+
