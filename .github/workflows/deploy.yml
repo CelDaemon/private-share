@@ -26,11 +26,6 @@ jobs:
         env:
           WEB_EXT_API_KEY: ${{ secrets.API_KEY }}
           WEB_EXT_API_SECRET: ${{ secrets.API_SECRET }}
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: private_share-${{ env.VERSION }}-signed
-          path: out/*
 
         
 
