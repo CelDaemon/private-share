@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: npm install -D
       - name: Sign extension
-        run: npx web-ext sign -s src -a out --channel unlisted --approval-timeout 0
+        run: npx web-ext sign -s src -a out --channel listed --approval-timeout 0
         env:
           WEB_EXT_API_KEY: ${{ secrets.API_KEY }}
           WEB_EXT_API_SECRET: ${{ secrets.API_SECRET }}
