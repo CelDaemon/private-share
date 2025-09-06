@@ -12,6 +12,11 @@
     function handleTwitter(url) {
         url.host = "fixupx.com"
     }
+    function handleTiktok(url) {
+        url.searchParams.delete("is_from_webapp")
+        url.searchParams.delete("sender_device")
+        url.searchParams.delete("web_id")
+    }
     function handleCopy(text) {
         const url = URL.parse(text);
         if(!url)
@@ -28,6 +33,9 @@
                 break;
             case "x.com":
                 handleTwitter(url);
+                break;
+            case "tiktok.com":
+                handleTiktok(url);
                 break;
             default:
                 return false;
