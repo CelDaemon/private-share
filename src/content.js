@@ -1,46 +1,50 @@
 (function() {
+    const REDDIT_POST_REGEX = /^\/r\/[^/]+\/comments\/(\w+)\/[^/]+\/$/;
     function handleReddit(url) {
-        url.search = "";
-        const match = /^\/r\/[^/]+\/comments\/(\w+)\/[^/]+\/$/.exec(url.pathname);
+        const match = REDDIT_POST_REGEX.exec(url.pathname);
         if(!match)
             return;
         url.href = `https://redd.it/${match[1]}`;
     }
-    function handleYoutube(url) {
-        url.searchParams.delete("si");
-    }
+    const TWITTER_STATUS_REGEX = /^\/[^/]+\/status\/\d+$/;
     function handleTwitter(url) {
-        url.host = "fixupx.com"
+        if(!TWITTER_STATUS_REGEX.test(url.pathname))
+            return;
+        url.host = "fixupx.com";
     }
     function handleTiktok(url) {
-        url.searchParams.delete("is_from_webapp")
-        url.searchParams.delete("sender_device")
-        url.searchParams.delete("web_id")
+        url.searchParams.delete("is_from_webapp");
+        url.searchParams.delete("sender_device");
+        url.searchParams.delete("web_id");
+    }
+    const GENERAL_REGEX = /^(si|(utm_.+))$/;
+    function handleGeneral(url) {
+        for(const key of url.searchParams.keys()) {
+            if(GENERAL_REGEX.test(key))
+                url.searchParams.delete(key);
+        }
     }
     function handleCopy(text) {
-        const url = URL.parse(text);
-        if(!url)
-            return false;
-        switch(url.host) {
-            case "www.reddit.com":
-                handleReddit(url);
-                break;
-            case "www.youtube.com":
-            case "youtube.com":
-            case "youtu.be":
-            case "music.youtube.com":
-                handleYoutube(url);
-                break;
-            case "x.com":
-                handleTwitter(url);
-                break;
-            case "tiktok.com":
-                handleTiktok(url);
-                break;
-            default:
-                return false;
-        }
-        return navigator.clipboard._writeText(url.href);
+        const URL_REGEX = /(http|https):\/\/[^\s]+/
+        text = text.replace(URL_REGEX, (text) => {
+            const url = URL.parse(text);
+            if(!url)
+                return text;
+            handleGeneral(url);
+            switch(url.host) {
+                case "www.reddit.com":
+                    handleReddit(url);
+                    break;
+                case "x.com":
+                    handleTwitter(url);
+                    break;
+                case "tiktok.com":
+                    handleTiktok(url);
+                    break;
+            }
+            return url.href;
+        })
+        return navigator.clipboard._writeText(text);
     }
     navigator.clipboard._writeText ??= navigator.clipboard.writeText;
     navigator.clipboard.writeText = async function(text) {
