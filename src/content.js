@@ -17,12 +17,10 @@
         url.searchParams.delete("sender_device");
         url.searchParams.delete("web_id");
     }
-    const GENERAL_REGEX = /^(si|(utm_.+))$/;
+    const GENERAL_REGEX = /^(si)|(utm_.+)$/;
     function handleGeneral(url) {
-        for(const key of url.searchParams.keys()) {
-            if(GENERAL_REGEX.test(key))
-                url.searchParams.delete(key);
-        }
+        for(const key of [...url.searchParams.keys().filter(key => GENERAL_REGEX.test(key))])
+            url.searchParams.delete(key);
     }
     function handleCopy(text) {
         const URL_REGEX = /(http|https):\/\/[^\s]+/
