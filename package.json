@@ -2,6 +2,6 @@
   "name": "private_share",
   "version": "0.3.4.1",
   "devDependencies": {
-    "web-ext": "^8.9.0"
+    "web-ext": "^8.10.0"
   }
 }
