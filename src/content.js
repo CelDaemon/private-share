@@ -36,7 +36,7 @@
                 case "x.com":
                     handleTwitter(url);
                     break;
-                case "tiktok.com":
+                case "www.tiktok.com":
                     handleTiktok(url);
                     break;
             }
