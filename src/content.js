@@ -8,6 +8,7 @@
     }
     const TWITTER_STATUS_REGEX = /^\/[^/]+\/status\/\d+$/;
     function handleTwitter(url) {
+        url.searchParams.delete("s");
         if(!TWITTER_STATUS_REGEX.test(url.pathname))
             return;
         url.host = "fixupx.com";
