@@ -2,23 +2,49 @@ on:
   push:
 
 jobs:
-  build:
+  build-firefox:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
       - name: Resolve metadata
+        id: resolve-meta
         run: |
-          echo "VERSION=$(jq -r '.version' package.json)" >> "$GITHUB_ENV"
-          echo "EXTENSION_NAME=$(jq -r '.name' package.json)" >> "$GITHUB_ENV"
+          cat << EOF >> "$GITHUB_OUTPUT"
+          version=$(jq -r '.version' package.json)
+          extension-name=$(jq -r '.name' package.json)
+          EOF
       - name: Populate manifest
-        run: jq ".version = \"$VERSION\"" src/manifest.json > src/manifest.json.tmp && mv src/manifest.json.tmp src/manifest.json
+        run: "jq '.version = \"${{ steps.resolve-meta.outputs.version }}\" | .icons = {\"16\": \"icon.svg\", \"32\": \"icon.svg\"}' src/manifest.json > src/manifest.json.tmp && mv src/manifest.json.tmp src/manifest.json"
       - name: Install dependencies
         run: npm install -D
       - name: Build extension
-        run: npx web-ext build -s src -a out
+        run: npx web-ext build -s src -a out -i icon*.png
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: private_share-${{env.VERSION}}-unsigned
+          name: ${{ steps.resolve-meta.outputs.extension-name }}-${{ steps.resolve-meta.outputs.version }}-firefox
+          path: out/*
+  build-chrome:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      - name: Resolve metadata
+        id: resolve-meta
+        run: |
+          cat << EOF >> "$GITHUB_OUTPUT"
+          version=$(jq -r '.version' package.json)
+          extension-name=$(jq -r '.name' package.json)
+          EOF
+      - name: Populate manifest
+        run: "jq '.version = \"${{ steps.resolve-meta.outputs.version }}\" | .icons = {\"16\": \"icon-16.png\", \"32\": \"icon-32.png\", \"64\": \"icon-64.png\", \"128\": \"icon-128.png\"}' src/manifest.json > src/manifest.json.tmp && mv src/manifest.json.tmp src/manifest.json"
+      - name: Install dependencies
+        run: npm install -D
+      - name: Build extension
+        run: npx web-ext build -s src -a out -i icon.svg
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.resolve-meta.outputs.extension-name }}-${{ steps.resolve-meta.outputs.version }}-chrome
           path: out/*

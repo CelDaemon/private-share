@@ -12,17 +12,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v5
       - name: Resolve metadata
+        id: resolve-meta
         run: |
-          cat << EOF >> "$GITHUB_ENV"
-          VERSION=$(jq -r '.version' package.json)
-          EXTENSION_NAME=$(jq -r '.name' package.json)
+          cat << EOF >> "$GITHUB_OUTPUT"
+          version=$(jq -r '.version' package.json)
+          extension-name=$(jq -r '.name' package.json)
           EOF
       - name: Populate manifest
-        run: jq ".version = \"$VERSION\"" src/manifest.json > src/manifest.json.tmp && mv src/manifest.json.tmp src/manifest.json
+        run: "jq '.version = \"${{ steps.resolve-meta.outputs.version }}\" | .icons = {\"16\": \"icon.svg\", \"32\": \"icon.svg\"}' src/manifest.json > src/manifest.json.tmp && mv src/manifest.json.tmp src/manifest.json"
       - name: Install dependencies
         run: npm install -D
       - name: Sign extension
-        run: npx web-ext sign -s src -a out --channel listed --approval-timeout 0
+        run: npx web-ext sign -s src -a out -i icon*.png --channel listed --approval-timeout 0
         env:
           WEB_EXT_API_KEY: ${{ secrets.API_KEY }}
           WEB_EXT_API_SECRET: ${{ secrets.API_SECRET }}
