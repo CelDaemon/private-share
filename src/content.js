@@ -18,6 +18,9 @@
         url.searchParams.delete("sender_device");
         url.searchParams.delete("web_id");
     }
+    function handleInstagram(url) {
+        url.searchParams.delete("igsh");
+    }
     const GENERAL_REGEX = /^(si)|(utm_.+)$/;
     function handleGeneral(url) {
         for(const key of [...url.searchParams.keys().filter(key => GENERAL_REGEX.test(key))])
@@ -39,6 +42,9 @@
                     break;
                 case "www.tiktok.com":
                     handleTiktok(url);
+                    break;
+                case "www.instagram.com":
+                    handleInstagram(url);
                     break;
             }
             return url.href;
